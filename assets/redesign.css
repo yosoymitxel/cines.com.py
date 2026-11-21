@@ -71,3 +71,7 @@ button:disabled{cursor:not-allowed;opacity:.55}
 .film-card:first-child{align-items:start}
 
 @media(min-width:761px) and (max-width:1050px){.film-card:first-child{grid-column:span 4;display:block}.film-card:first-child .film-poster-link{aspect-ratio:2/3}.film-card:first-child .film-copy h3{font-size:16px}}
+
+
+/* WCAG AA contrast: reserve the bright signal for dark surfaces and fills. */
+.site-header .brand-icon,.film-index,.session-number,.session-arrow,.venue-row-index,.upcoming-index,.info-steps article>i{color:#b93220}
