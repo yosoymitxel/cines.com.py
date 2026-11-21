@@ -47,10 +47,15 @@ def run_preview_checks(page, movie_title: str) -> None:
           documentWidth: document.documentElement.scrollWidth,
           bodyWidth: document.body.scrollWidth,
           title: document.title,
-          h1: document.querySelector('h1')?.innerText
+          h1: document.querySelector('h1')?.innerText,
+          heroHeadingOverflow: (() => {
+            const heading = document.querySelector('.front-lead h1');
+            return heading ? heading.scrollWidth > heading.clientWidth + 1 : false;
+          })()
         })""")
         assert metrics["documentWidth"] <= width and metrics["bodyWidth"] <= width, f"Desbordamiento horizontal: {label}: {metrics}"
         assert metrics["title"] and metrics["h1"], f"Falta title o H1: {label}"
+        assert not metrics["heroHeadingOverflow"], f"El titular principal desborda su columna: {label}: {metrics}"
         accessibility = page.evaluate("""() => ({
           imagesWithoutAlt: [...document.images].filter(image => !image.hasAttribute('alt')).length,
           unnamedButtons: [...document.querySelectorAll('button')].filter(button => !button.innerText.trim() && !button.getAttribute('aria-label')).length,
@@ -111,8 +116,10 @@ def run_preview_checks(page, movie_title: str) -> None:
         result = page.request.get(urljoin(BASE_URL + "/", route))
         assert result.status == 200, f"Ruta HTML rota: {route} ({result.status})"
 
-    page.goto(BASE_URL + BASE_PATH + "estrenos/", wait_until="networkidle")
-    assert page.locator("h1").inner_text() == "Lo que viene"
+    upcoming_response = page.goto(BASE_URL + BASE_PATH + "estrenos/", wait_until="networkidle")
+    assert upcoming_response and upcoming_response.status == 200, "La página de estrenos no responde correctamente."
+    upcoming_heading = page.locator(".page-intro h1").text_content().strip()
+    assert upcoming_heading == "Lo que viene", f"Título inesperado en estrenos: {upcoming_heading!r}"
     page.goto(BASE_URL + BASE_PATH + "contacto/", wait_until="networkidle")
     assert page.locator('a[href="mailto:info@cines.com.py"]').count() == 1
 

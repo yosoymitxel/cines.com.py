@@ -9,13 +9,27 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const dist = path.join(root, 'dist');
 const required = [
   'index.html', 'cartelera/index.html', 'estrenos/index.html', 'salas/index.html',
-  'contacto/index.html', 'sitemap.xml', 'robots.txt', 'feed.xml', 'assets/main.css', 'assets/main.js'
+  'contacto/index.html', 'sitemap.xml', 'robots.txt', 'feed.xml', 'assets/main.css', 'assets/redesign.css', 'assets/main.js'
 ];
 for (const file of required) await fs.access(path.join(dist, file));
 const data = JSON.parse(await fs.readFile(path.join(root, 'data/cines.json'), 'utf8'));
 assert.ok(Array.isArray(data.movies) && data.movies.length > 0, 'snapshot must contain movies');
 const html = await fs.readFile(path.join(dist, 'index.html'), 'utf8');
 assert.match(html, /<html lang="es-PY">/);
+assert.ok(html.includes('https://yosoymitxel.github.io/cines.com.py/'), 'canonical must include the GitHub Pages project path once');
+assert.ok(!html.includes('/cines.com.py/cines.com.py/'), 'canonical must not duplicate the project path');
+assert.ok(html.includes('property="og:locale" content="es_PY"'));
+assert.ok(html.includes('name="twitter:image"'));
+assert.ok(html.includes('assets/redesign.css'));
+const schemaMarker = '<script type="application/ld+json">';
+const schemaStart = html.indexOf(schemaMarker) + schemaMarker.length;
+const schemaEnd = html.indexOf('</script>', schemaStart);
+const structuredData = JSON.parse(html.slice(schemaStart, schemaEnd));
+assert.equal(structuredData['@context'], 'https://schema.org');
+const visualCss = await fs.readFile(path.join(dist, 'assets/redesign.css'), 'utf8');
+assert.ok(visualCss.includes('prefers-reduced-motion'));
+assert.ok(visualCss.includes('min-height:44px'));
+assert.ok(visualCss.includes('@media(max-width:760px)'));
 assert.match(html, /<title>[^<]+<\/title>/);
 assert.match(html, /application\/ld\+json/);
 assert.match(html, /Saltar al contenido/);
@@ -43,6 +57,11 @@ for (const route of movieRoutes) {
   assert.equal(venueNames.length, new Set(venueNames).size, `duplicate venue group on ${route}`);
 }
 const sitemap = await fs.readFile(path.join(dist, 'sitemap.xml'), 'utf8');
+const robots = await fs.readFile(path.join(dist, 'robots.txt'), 'utf8');
+assert.ok(robots.includes('https://yosoymitxel.github.io/cines.com.py/sitemap.xml'));
+assert.ok(!robots.includes('/cines.com.py/cines.com.py/'));
+assert.ok(sitemap.includes('https://yosoymitxel.github.io/cines.com.py/'));
+assert.ok(!sitemap.includes('/cines.com.py/cines.com.py/'));
 assert.equal((sitemap.match(/<url>/g) || []).length, buildInfo.routeCount, 'sitemap and generated route count differ');
 console.log(`PASS: ${buildInfo.routeCount} rutas HTML, ${buildInfo.movieCount} películas, ${buildInfo.cinemaCount} salas; ${buildInfo.cinemaProfilesWithPrices} fichas con tarifas y ${buildInfo.moviesWithOfficialDetails} con metadata oficial.`);
 

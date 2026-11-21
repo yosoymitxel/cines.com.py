@@ -39,3 +39,12 @@ Cada película y cada sala tiene HTML propio, title y description, canonical, Op
 ## Capturas y pruebas
 
 El flujo de validación utiliza Playwright en 1440, 1024, 768, 390 y 360 px, además de navegación, búsqueda, filtros, fichas y enlaces internos. Intenta capturar también las páginas originales de Cines.com.py para conservar una referencia visual; si la web externa no responde, las capturas originales se omiten sin invalidar las pruebas del prototipo.
+
+
+## SEO y GitHub Pages
+
+Cada película y sala tiene HTML propio, title, description, canonical, Open Graph, Twitter Cards y JSON-LD. Sitemap, robots.txt y RSS usan la URL pública del proyecto. `SITE_URL` debe ser solo el origen (`https://yosoymitxel.github.io`) y `BASE_PATH` el subdirectorio (`/cines.com.py/`).
+
+## Diseño y calidad
+
+La dirección visual está documentada en `DESIGN.md`. `docs/ANTI-SLOP-UI.md` define el gate antislop-ui; `docs/DESIGN-SKILLS.md` registra las skills de `recent.design` para crítica, animación y pulido. La implementación sigue también [Modern Web Guidance](https://github.com/GoogleChrome/modern-web-guidance) y los criterios de auditoría de [Claude SEO](https://github.com/AgriciDaniel/claude-seo), resumidos en `docs/SEO-CHECKLIST.md`.

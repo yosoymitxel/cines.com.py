@@ -9,3 +9,9 @@
 - Every route must be generated as HTML during `npm run build` and included in `dist/`.
 - Run `npm test`, `npm run build`, and Playwright browser smoke checks at 1440, 1024, 768, 390 and 360 px before shipping.
 - Keep all project changes in one final commit on `main`; do not create progress commits.
+
+- Apply the Anti-slop UI gate in `docs/ANTI-SLOP-UI.md` during every visual change.
+- Use `DESIGN.md` as visual source of truth and `docs/DESIGN-SKILLS.md` for animation and polish reviews.
+- Preserve GitHub Pages subpath compatibility: `SITE_URL` is origin-only and `BASE_PATH` is the project path.
+- Before shipping, run build, static tests, Playwright responsive checks and review generated screenshots. Report unverified checks honestly.
+- Follow `docs/SEO-CHECKLIST.md` for metadata, structured data, crawlability and Core Web Vitals reporting.

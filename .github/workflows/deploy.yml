@@ -33,8 +33,14 @@ jobs:
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
       - name: Build static pages
+        env:
+          SITE_URL: https://yosoymitxel.github.io
+          BASE_PATH: /cines.com.py/
         run: npm run build
       - name: Validate generated output
+        env:
+          SITE_URL: https://yosoymitxel.github.io
+          BASE_PATH: /cines.com.py/
         run: npm test
       - name: Install Playwright
         run: |

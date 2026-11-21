@@ -10,7 +10,7 @@ const DATA_FILE = path.join(ROOT, 'data', 'cines.json');
 const DATA_URL = process.env.CINES_DATA_URL || 'https://raw.githubusercontent.com/yosoymitxel/Web-scrapping/main/data/cines.json';
 const UPCOMING_URL = process.env.UPCOMING_DATA_URL || 'https://www.cines.com.py/estrenos/';
 const BASE_PATH = normaliseBase(process.env.BASE_PATH || '/cines.com.py/');
-const SITE_URL = (process.env.SITE_URL || 'https://yosoymitxel.github.io/cines.com.py').replace(/\/$/, '');
+const SITE_URL = new URL(process.env.SITE_URL || 'https://yosoymitxel.github.io').origin;
 const OFFICIAL_HOSTS = new Set(['cines.com.py', 'www.cines.com.py']);
 
 function normaliseBase(value) {
@@ -114,20 +114,28 @@ function pageShell({ title, description, route, content, active = '', image = ''
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#10231f">
+  <meta name="theme-color" content="#f5efe5">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <meta name="author" content="Cines PY">
   <title>${escapeHtml(title)}</title>
   <meta name="description" content="${escapeHtml(description)}">
   <link rel="canonical" href="${escapeHtml(canonicalUrl)}">
   <link rel="alternate" type="application/rss+xml" title="Cines PY · Cartelera" href="${local('feed.xml')}">
   <meta property="og:type" content="${escapeHtml(type)}">
+  <meta property="og:locale" content="es_PY">
   <meta property="og:site_name" content="Cines PY · Cartelera">
   <meta property="og:title" content="${escapeHtml(title)}">
   <meta property="og:description" content="${escapeHtml(description)}">
   <meta property="og:url" content="${escapeHtml(canonicalUrl)}">
   <meta property="og:image" content="${escapeHtml(metaImage)}">
+  <meta property="og:image:alt" content="Cartelera de cine en Paraguay: ${escapeHtml(title)}">
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="${escapeHtml(title)}">
+  <meta name="twitter:description" content="${escapeHtml(description)}">
+  <meta name="twitter:image" content="${escapeHtml(metaImage)}">
   <link rel="icon" href="${local('assets/favicon.svg')}" type="image/svg+xml">
   <link rel="stylesheet" href="${local('assets/main.css')}">
+  <link rel="stylesheet" href="${local('assets/redesign.css')}">
   ${jsonLd ? `<script type="application/ld+json">${safeJson(jsonLd)}</script>` : ''}
   <script src="${local('assets/main.js')}" defer></script>
 </head>
@@ -367,7 +375,7 @@ async function build() {
   for (const movie of movies) await writePage(`/pelicula/${movie.slug}/`, pageMovie(movie));
   for (const venue of venues) await writePage(`/cine/${venue.slug}/`, pageVenue(venue, movies));
   await fs.mkdir(path.join(DIST, 'assets'), { recursive: true });
-  for (const file of ['main.css', 'main.js', 'favicon.svg', 'share.svg']) await fs.copyFile(path.join(ROOT, 'assets', file), path.join(DIST, 'assets', file));
+  for (const file of ['main.css', 'redesign.css', 'main.js', 'favicon.svg', 'share.svg']) await fs.copyFile(path.join(ROOT, 'assets', file), path.join(DIST, 'assets', file));
   const allRoutes = ['/', '/cartelera/', '/estrenos/', '/salas/', '/contacto/', ...movies.map(m => `/pelicula/${m.slug}/`), ...venues.map(v => `/cine/${v.slug}/`)];
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${allRoutes.map(route => `<url><loc>${xmlEscape(canonical(route))}</loc><lastmod>${new Date(DATA_UPDATED).toISOString().slice(0,10)}</lastmod></url>`).join('')}</urlset>`;
   await fs.writeFile(path.join(DIST, 'sitemap.xml'), sitemap);
