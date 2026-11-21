@@ -75,3 +75,7 @@ button:disabled{cursor:not-allowed;opacity:.55}
 
 /* WCAG AA contrast: reserve the bright signal for dark surfaces and fills. */
 .site-header .brand-icon,.film-index,.session-number,.session-arrow,.venue-row-index,.upcoming-index,.info-steps article>i{color:#b93220}
+
+/* Mobile layout repair: keep the poster in the narrow track and copy in the fluid track. */
+@media(max-width:390px){.front-lead{grid-template-columns:96px minmax(0,1fr)!important}.front-lead-copy{min-width:0}.lead-poster{width:96px;max-width:96px}}
+@media(max-width:760px){.section-heading{flex-wrap:wrap}.section-heading>div{min-width:0;flex:1 1 100%}.section-heading h2,.page-intro h1,.venue-band h2,.front-lead h1{min-width:0;overflow-wrap:anywhere}.page-intro-inner{align-items:flex-start;flex-wrap:wrap;gap:18px}.intro-count{margin-left:0}.front-kicker,.front-bottom{flex-wrap:wrap}.front-date{margin-left:auto}}
