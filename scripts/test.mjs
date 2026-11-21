@@ -105,3 +105,12 @@ assert.match(cinemaData.filmDetails[3525].cast, /Joseph Zada.*Elle Fanning/);
 assert.equal(cinemaData.filmDetails[3525].runtime, '150 min.');
 assert.equal(cinemaData.filmDetails[3557].director, 'Peter Farrelly.');
 console.log('PASS: extracción de fichas oficiales, tarifas 2D/3D/4D y metadatos de películas.');
+
+const catalogue = await fs.readFile(path.join(dist, 'cartelera/index.html'), 'utf8');
+assert.match(catalogue, /id="results-count"[^>]*aria-live="polite"[^>]*aria-atomic="true"/);
+assert.match(catalogue, /id="no-results"[^>]*role="status"[^>]*aria-live="polite"/);
+assert.match(visualCss, /\.film-index[^}]*color:#b93220/);
+for (const route of movieRoutes) {
+  const detail = await fs.readFile(path.join(movieDirectory, route, 'index.html'), 'utf8');
+  assert.match(detail, /Afiche no disponible: [^"]+/);
+}
