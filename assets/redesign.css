@@ -79,3 +79,24 @@ button:disabled{cursor:not-allowed;opacity:.55}
 /* Mobile layout repair: keep the poster in the narrow track and copy in the fluid track. */
 @media(max-width:390px){.front-lead{grid-template-columns:96px minmax(0,1fr)!important}.front-lead-copy{min-width:0}.lead-poster{width:96px;max-width:96px}}
 @media(max-width:760px){.section-heading{flex-wrap:wrap}.section-heading>div{min-width:0;flex:1 1 100%}.section-heading h2,.page-intro h1,.venue-band h2,.front-lead h1{min-width:0;overflow-wrap:anywhere}.page-intro-inner{align-items:flex-start;flex-wrap:wrap;gap:18px}.intro-count{margin-left:0}.front-kicker,.front-bottom{flex-wrap:wrap}.front-date{margin-left:auto}}
+
+/* Responsive containment: prevent grid/flex min-content sizing from pushing mobile sections outside the viewport. */
+@media(max-width:760px){
+  .site-header,.front-matter,.film-section,.venue-band,.page-intro,.catalogue-section,.movie-detail,.session-section,.venue-directory,.upcoming-section,.contact-section,.site-footer{min-width:0;max-width:100%}
+  .site-header *,.front-matter *,.film-section *,.venue-band *,.page-intro *,.catalogue-section *,.movie-detail *,.session-section *,.venue-directory *,.upcoming-section *,.contact-section *,.site-footer *{min-width:0}
+  .front-lead{grid-template-columns:minmax(96px,30%) minmax(0,1fr);gap:clamp(10px,3vw,18px)}
+  .front-lead-copy,.lead-poster,.front-side,.film-card,.venue-row,.upcoming-row,.movie-detail>*{min-width:0}
+  .front-lead h1,.film-copy h3,.programme-main h3,.venue-band h2,.page-intro h1,.movie-detail-copy h1,.venue-row strong,.upcoming-row h2{overflow-wrap:anywhere}
+  .section-heading{display:flex;align-items:flex-start;flex-wrap:wrap}
+  .section-heading>div{flex:1 1 100%;min-width:0}
+  .section-heading>.text-link{white-space:normal;max-width:100%}
+  .front-kicker,.front-bottom{flex-wrap:wrap}
+  .front-date{margin-left:auto}
+  .page-intro-inner{align-items:flex-start;flex-wrap:wrap;gap:18px}
+  .intro-count{margin-left:0}
+}
+@media(max-width:390px){
+  .front-lead{grid-template-columns:minmax(84px,30%) minmax(0,1fr)!important;gap:10px}
+  .lead-poster{width:100%;max-width:96px}
+  .front-lead h1{font-size:clamp(30px,9vw,36px)}
+}
