@@ -1,0 +1,15 @@
+{
+  "name": "cines-py-redesign",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node scripts/test.mjs",
+    "preview": "node scripts/preview.mjs",
+    "test:browser": "python scripts/visual-smoke.py"
+  }
+}
