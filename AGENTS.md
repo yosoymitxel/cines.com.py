@@ -1,7 +1,10 @@
 # Project instructions
 
 - Read `PRODUCT.md`, `DESIGN.md` and `.impeccable/surfaces/cines-redesign.md` before UI changes.
-- Preserve source facts. Never invent film metadata, cinema addresses, prices, ratings, reviews or booking availability.
+- Preserve data accuracy. Never invent film metadata, cinema addresses, prices, ratings, reviews or booking availability.
+- Cines PY is the final public website, never describe it as a proposal, clone, parallel or unofficial site.
+- No UI links, redirects, disclaimers or copy that send visitors to or refer them to another cinema website.
+- Use Font Awesome for interface icons; do not use Unicode arrows or hand-drawn icon substitutes.
 - `data/cines.json` is the last known snapshot. Production builds fetch the published Web-scrapping JSON and fall back to this file.
 - Keep this project static: no application backend, database, runtime API or client-side-only SEO content.
 - Keep dependencies at zero unless a concrete requirement cannot be met with Node/browser primitives.

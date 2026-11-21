@@ -21,6 +21,14 @@ assert.ok(!html.includes('/cines.com.py/cines.com.py/'), 'canonical must not dup
 assert.ok(html.includes('property="og:locale" content="es_PY"'));
 assert.ok(html.includes('name="twitter:image"'));
 assert.ok(html.includes('assets/redesign.css'));
+assert.ok(html.includes('font-awesome/6.7.2/css/all.min.css'), 'Font Awesome must be loaded');
+assert.ok(!/href=["']https?:\/\/(?:www\.)?cines\.com\.py/i.test(html), 'homepage must not link to another cinema website');
+assert.doesNotMatch(html, /propuesta independiente|no es un sitio oficial|no está afiliado/i);
+for (const route of ['cartelera/index.html', 'estrenos/index.html', 'salas/index.html', 'contacto/index.html']) {
+  const page = await fs.readFile(path.join(dist, route), 'utf8');
+  assert.doesNotMatch(page, /href=["']https?:\/\/(?:www\.)?cines\.com\.py/i, `external cinema redirect in ${route}`);
+  assert.doesNotMatch(page, /propuesta independiente|no es un sitio oficial|no está afiliado/i, `parallel-site disclaimer in ${route}`);
+}
 const schemaMarker = '<script type="application/ld+json">';
 const schemaStart = html.indexOf(schemaMarker) + schemaMarker.length;
 const schemaEnd = html.indexOf('</script>', schemaStart);
@@ -33,10 +41,10 @@ assert.ok(visualCss.includes('@media(max-width:760px)'));
 assert.match(html, /<title>[^<]+<\/title>/);
 assert.match(html, /application\/ld\+json/);
 assert.match(html, /Saltar al contenido/);
-assert.match(html, /Propuesta de rediseño independiente/);
+assert.match(html, /CARTELERA DE CINE EN PARAGUAY/);
 assert.match(html, /type="application\/rss\+xml"/);
 assert.match(html, /fetchpriority="high"/);
-assert.doesNotMatch(html, /fonts\.googleapis\.com|cdnjs\.cloudflare\.com|unpkg\.com/i);
+assert.doesNotMatch(html, /fonts\.googleapis\.com|unpkg\.com/i);
 const buildInfo = JSON.parse(await fs.readFile(path.join(dist, 'build-info.json'), 'utf8'));
 assert.equal(buildInfo.movieCount, data.movies.length);
 assert.ok(buildInfo.cinemaCount > 0 && buildInfo.routeCount >= buildInfo.movieCount + 5);
@@ -53,6 +61,8 @@ for (const route of movieRoutes) {
   assert.match(detail, /<link rel="canonical"/, `missing canonical on ${route}`);
   assert.match(detail, /Horarios|funciones|salas/i, `missing session content on ${route}`);
   assert.match(detail, /application\/ld\+json/, `missing structured data on ${route}`);
+  assert.doesNotMatch(detail, /href=["']https?:\/\/(?:www\.)?cines\.com\.py/i, 'external cinema redirect in ' + route);
+  assert.doesNotMatch(detail, /propuesta independiente|no es un sitio oficial|no está afiliado/i, `parallel-site disclaimer in ${route}`);
   const venueNames = [...detail.matchAll(/<h2>([^<]+)<\/h2>/g)].map(match => match[1]);
   assert.equal(venueNames.length, new Set(venueNames).size, `duplicate venue group on ${route}`);
 }

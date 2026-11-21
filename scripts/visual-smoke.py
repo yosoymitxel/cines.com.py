@@ -63,7 +63,7 @@ def run_preview_checks(page, movie_title: str) -> None:
           unsafeBlankLinks: document.querySelectorAll('a[target="_blank"]:not([rel*="noopener"])').length
         })""")
         assert not any(accessibility.values()), f"Problema de accesibilidad o enlaces: {label}: {accessibility}"
-        page.screenshot(path=str(ARTIFACTS / f"proposal-home-{label}.png"), full_page=True)
+        page.screenshot(path=str(ARTIFACTS / f"cinespy-home-{label}.png"), full_page=True)
 
         if width <= 760:
             toggle = page.locator(".nav-toggle")
@@ -78,7 +78,7 @@ def run_preview_checks(page, movie_title: str) -> None:
     search = page.locator("#film-search")
     search.fill(movie_title)
     assert page.locator("[data-film-card]:visible").count() >= 1, "La búsqueda no devuelve la película de prueba."
-    page.screenshot(path=str(ARTIFACTS / "proposal-catalogue.png"), full_page=True)
+    page.screenshot(path=str(ARTIFACTS / "cinespy-catalogue.png"), full_page=True)
 
     search.fill("cines-py-titulo-inexistente")
     assert not page.locator("#no-results").is_hidden(), "No aparece el estado vacío de búsqueda."
@@ -94,7 +94,7 @@ def run_preview_checks(page, movie_title: str) -> None:
     response = page.goto(urljoin(BASE_URL + "/", venue_href), wait_until="networkidle")
     assert response and response.status == 200, "La ficha de cine no se genera."
     assert page.locator("h1").count() == 1
-    page.screenshot(path=str(ARTIFACTS / "proposal-cinema-detail.png"), full_page=True)
+    page.screenshot(path=str(ARTIFACTS / "cinespy-cinema-detail.png"), full_page=True)
 
     page.goto(BASE_URL + BASE_PATH + "cartelera/", wait_until="networkidle")
     first_movie = page.locator("[data-film-card] h3 a").first
@@ -103,8 +103,8 @@ def run_preview_checks(page, movie_title: str) -> None:
     response = page.goto(urljoin(BASE_URL + "/", movie_href), wait_until="networkidle")
     assert response and response.status == 200, "La ficha de película no se genera."
     assert page.locator(".venue-session").count() >= 1
-    assert page.locator('a[href^="https://www.cines.com.py/"]').count() >= 1, "La ficha no enlaza a la fuente oficial."
-    page.screenshot(path=str(ARTIFACTS / "proposal-movie-detail.png"), full_page=True)
+    assert page.locator('a[href^="https://www.cines.com.py/"]').count() == 0, "La ficha contiene una redirección externa."
+    page.screenshot(path=str(ARTIFACTS / "cinespy-movie-detail.png"), full_page=True)
 
     # Probe every generated HTML route, including detail pages not linked from this screen.
     routes = []
@@ -121,7 +121,7 @@ def run_preview_checks(page, movie_title: str) -> None:
     upcoming_heading = page.locator(".page-intro h1").text_content().strip()
     assert upcoming_heading == "Lo que viene", f"Título inesperado en estrenos: {upcoming_heading!r}"
     page.goto(BASE_URL + BASE_PATH + "contacto/", wait_until="networkidle")
-    assert page.locator('a[href="mailto:info@cines.com.py"]').count() == 1
+    assert page.locator(".info-steps article").count() == 3
 
     assert not errors, "Errores JavaScript: " + " | ".join(errors)
 
@@ -165,7 +165,7 @@ def run_offline_browser_checks(page, movie_title: str) -> None:
         assert metrics["title"] and metrics["h1"], f"Falta title o H1: {label}"
         accessibility = page.evaluate("""() => ({ imagesWithoutAlt: [...document.images].filter(image => !image.hasAttribute('alt')).length, unnamedButtons: [...document.querySelectorAll('button')].filter(button => !button.innerText.trim() && !button.getAttribute('aria-label')).length, emptyLinks: [...document.querySelectorAll('a')].filter(link => !link.innerText.trim() && !link.getAttribute('aria-label') && !link.querySelector('img[alt], [aria-label]')).length })""")
         assert not any(accessibility.values()), f"Problema de accesibilidad: {label}: {accessibility}"
-        page.screenshot(path=str(ARTIFACTS / f"proposal-home-{label}.png"), full_page=True)
+        page.screenshot(path=str(ARTIFACTS / f"cinespy-home-{label}.png"), full_page=True)
         if width <= 760:
             toggle = page.locator(".nav-toggle")
             toggle.click()
@@ -176,7 +176,7 @@ def run_offline_browser_checks(page, movie_title: str) -> None:
     render_static_document(page, "cartelera/index.html")
     page.locator("#film-search").fill(movie_title)
     assert page.locator("[data-film-card]:visible").count() >= 1, "La búsqueda no devuelve la película de prueba."
-    page.screenshot(path=str(ARTIFACTS / "proposal-catalogue.png"), full_page=True)
+    page.screenshot(path=str(ARTIFACTS / "cinespy-catalogue.png"), full_page=True)
     page.locator("#film-search").fill("cines-py-titulo-inexistente")
     assert not page.locator("#no-results").is_hidden(), "No aparece el estado vacío de búsqueda."
     page.locator("#film-search").fill("")
@@ -187,46 +187,10 @@ def run_offline_browser_checks(page, movie_title: str) -> None:
     for route, label in routes:
         render_static_document(page, route)
         assert page.locator("h1").count() == 1, f"Falta H1 único en {route}."
-        page.screenshot(path=str(ARTIFACTS / f"proposal-{label}.png"), full_page=True)
-    assert page.locator('a[href^="https://www.cines.com.py/"]').count() >= 1, "No se conserva el enlace a la fuente oficial."
+        page.screenshot(path=str(ARTIFACTS / f"cinespy-{label}.png"), full_page=True)
+    assert page.locator('a[href^="https://www.cines.com.py/"]').count() == 0, "La página contiene una redirección externa."
     assert not errors, "Errores JavaScript: " + " | ".join(errors)
     print("PASS: render Playwright sin navegación de red, responsive, menú, búsqueda y filtros.")
-
-def capture_original_site(page) -> bool:
-    base = os.environ.get("CINES_REFERENCE_URL", "https://www.cines.com.py/")
-    captures = [
-        ("original-home-desktop.png", "home/", 1440, 900),
-        ("original-home-mobile.png", "home/", 390, 844),
-        ("original-cartelera.png", "cartelera/", 1440, 900),
-        ("original-estrenos.png", "estrenos/", 1440, 900),
-    ]
-    success = False
-    for name, route, width, height in captures:
-        try:
-            page.set_viewport_size({"width": width, "height": height})
-            response = page.goto(urljoin(base, route), wait_until="domcontentloaded", timeout=20000)
-            if not response or response.status >= 400:
-                print(f"WARN: referencia {route} respondió sin éxito.")
-                continue
-            page.screenshot(path=str(ARTIFACTS / name), full_page=True, animations="disabled")
-            success = True
-        except Exception as error:  # The reference site is external and may be unavailable.
-            print(f"WARN: no se pudo capturar {route}: {error}")
-    try:
-        page.goto(urljoin(base, "home/"), wait_until="domcontentloaded", timeout=15000)
-        cinema = page.locator('a[href*="/cine/"]').first.get_attribute("href")
-        film = page.locator('a[href*="/pelicula/"]').first.get_attribute("href")
-        for href, filename in [(cinema, "original-cinema-detail.png"), (film, "original-movie-detail.png")]:
-            if not href:
-                continue
-            response = page.goto(urljoin(base, href), wait_until="domcontentloaded", timeout=15000)
-            if response and response.status < 400:
-                page.screenshot(path=str(ARTIFACTS / filename), full_page=True, animations="disabled")
-                success = True
-    except Exception as error:
-        print(f"WARN: no se pudieron descubrir fichas de la web original: {error}")
-    return success
-
 
 def main() -> int:
     ARTIFACTS.mkdir(parents=True, exist_ok=True)
@@ -261,8 +225,6 @@ def main() -> int:
                 page.close()
                 page = browser.new_page(viewport={"width": 1440, "height": 900}, device_scale_factor=1)
                 run_offline_browser_checks(page, movie_title)
-            captured = capture_original_site(page)
-            print("PASS: capturas de referencia Cines.com.py." if captured else "WARN: Cines.com.py no respondió; se conservaron capturas de la propuesta.")
             browser.close()
     finally:
         process.terminate()

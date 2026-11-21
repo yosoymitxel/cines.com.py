@@ -31,3 +31,8 @@ Inventario curado desde [recent.design/skills](https://recent.design/skills). Se
 
 ## SEO
 [Agricidaniel/claude-seo](https://github.com/AgriciDaniel/claude-seo): adoptar sus listas de verificación para SEO técnico, metadatos, datos estructurados, sitemap, contenido útil, Core Web Vitals y rastreabilidad. El plugin es para Claude Code; el proyecto documenta y aplica sus criterios sin declarar que el plugin se ejecutó aquí.
+
+## Skills obligatorias
+- [Ponytail](https://github.com/DietrichGebert/ponytail/tree/main/skills/ponytail): aplicar la escalera de mínima solución antes de añadir código, dependencias o abstracciones.
+- [Ponytail Audit](https://github.com/DietrichGebert/ponytail/tree/main/skills/ponytail-audit): mapear build, datos, rutas, pruebas, despliegue, seguridad, carga y código prescindible; cada hallazgo debe tener un caso reproducible.
+- [Anti-slop Core](https://github.com/miqdadbadjuber/anti-slop/blob/main/antislop.md) y [Anti-slop UI](https://github.com/miqdadbadjuber/anti-slop/tree/main/skills/antislop-ui): aplicar DURING y AFTER.

@@ -1,6 +1,6 @@
-# Cines PY — propuesta de rediseño
+# Cines PY — cartelera de cine en Paraguay
 
-Prototipo estático e independiente para modernizar la consulta de cartelera de cine en Paraguay. No es un sitio oficial ni está afiliado a Cines.com.py.
+Sitio público de cartelera para consultar películas, salas y horarios en Paraguay.
 
 ## Stack
 
@@ -12,7 +12,7 @@ Prototipo estático e independiente para modernizar la consulta de cartelera de 
 
 - Cartelera: `https://yosoymitxel.github.io/Web-scrapping/data/cines.json`.
 - El build intenta obtener la versión publicada y utiliza `data/cines.json` como snapshot si la fuente no responde.
-- Los estrenos y enlaces de fichas de salas se descubren desde `https://www.cines.com.py/estrenos/`. Las fichas oficiales de cada sala se consultan durante el build para añadir tarifas y metadatos de películas cuando están publicados; `data/estrenos.json` es el respaldo local de estrenos.
+- El proceso de actualización incorpora estrenos, tarifas y detalles de películas cuando esos datos están disponibles; `data/estrenos.json` conserva el respaldo local de estrenos.
 - Los textos originales de horarios no se convierten a horas estructuradas ni se alteran.
 - Solo se muestran datos que existan en las fuentes. Los precios y metadatos de las fichas oficiales se muestran solo cuando se recuperan; no se inventan domicilios, reseñas ni disponibilidad.
 
@@ -38,7 +38,7 @@ Cada película y cada sala tiene HTML propio, title y description, canonical, Op
 
 ## Capturas y pruebas
 
-El flujo de validación utiliza Playwright en 1440, 1024, 768, 390 y 360 px, además de navegación, búsqueda, filtros, fichas y enlaces internos. Intenta capturar también las páginas originales de Cines.com.py para conservar una referencia visual; si la web externa no responde, las capturas originales se omiten sin invalidar las pruebas del prototipo.
+El flujo de validación utiliza Playwright en 1440, 1024, 768, 390 y 360 px, además de navegación, búsqueda, filtros, fichas y enlaces internos. Las pruebas verifican las páginas publicadas, sus interacciones y el diseño responsive.
 
 
 ## SEO y GitHub Pages

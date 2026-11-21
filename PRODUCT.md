@@ -1,24 +1,23 @@
 # Product
 
 ## Surface
-Independent redesign proposal for the Paraguayan cinema listing currently published by Cines.com.py.
+Cines PY is the final public cinema-listing website for Paraguay.
 
 ## Audience
 People in Paraguay choosing a film, cinema and session time, primarily from mobile devices.
 
 ## Visitor job
-Find a film, compare the cinemas where it is playing, understand the published showtime text, and continue to the original cinema source for confirmation or ticketing.
-
-## Proof and content
-The panel's published `data/cines.json` is the source of current film posters, titles, genres, official film URLs, cinema names and raw showtime strings. The official Cines.com.py site is the source for additional public content when it can be fetched and attributed. Missing fields remain absent.
+Find a film, compare the cinemas where it is playing, and read the published showtimes in one place.
 
 ## Main action
-Find a session and open the corresponding official film page.
+Find a film and compare its sessions by cinema.
+
+## Content
+The site publishes film titles, posters, genres, cinema names, showtimes, available film details and published tariffs. Missing fields remain absent. No reviews, addresses, prices, ratings or availability are invented.
 
 ## Constraints
-- No custom backend, database, account system or runtime API.
 - Static HTML output for every indexable route.
-- Refresh current listings from the panel's JSON during scheduled GitHub Actions builds (every six hours).
-- Clearly identify the work as an independent concept, not an official Cines.com.py service.
-- No copied logos, fabricated reviews, invented metadata, invented prices or false ticket purchase controls.
-- Retain the original source URL on each movie page.
+- Refresh listings and details during scheduled builds.
+- No external navigation to another cinema website.
+- No disclaimers that describe Cines PY as a proposal, copy, parallel site or unofficial service.
+- No fabricated ticket purchase, booking or payment controls.
