@@ -18,7 +18,7 @@ ARTIFACTS = ROOT / "artifacts" / "visual-review"
 BASE_URL = os.environ.get("PREVIEW_URL", "http://127.0.0.1:4173")
 BASE_PATH = "/" + os.environ.get("BASE_PATH", "/cines.com.py/").strip("/") + "/"
 PORT = os.environ.get("PORT", "4173")
-SIZES = [(1440, 900, "desktop"), (1024, 900, "laptop"), (768, 1024, "tablet"), (390, 844, "mobile"), (360, 800, "small-mobile")]
+SIZES = [(1440, 900, "desktop"), (1024, 900, "laptop"), (768, 1024, "tablet"), (430, 932, "large-mobile"), (414, 896, "mobile-wide"), (390, 844, "mobile"), (375, 812, "mobile-compact"), (360, 800, "small-mobile")]
 
 
 def wait_for_server(url: str, process: subprocess.Popen[str]) -> None:
@@ -55,7 +55,11 @@ def run_preview_checks(page, movie_title: str) -> None:
         })""")
         assert metrics["documentWidth"] <= width and metrics["bodyWidth"] <= width, f"Desbordamiento horizontal: {label}: {metrics}"
         assert metrics["title"] and metrics["h1"], f"Falta title o H1: {label}"
+        clipped = page.evaluate("""() => [...document.querySelectorAll('main *, header *, footer *')].filter(el => { const r=el.getBoundingClientRect(); const s=getComputedStyle(el); return r.width > 0 && (r.right > innerWidth + 1 || r.left < -1) && s.position !== 'absolute' && s.position !== 'fixed'; }).slice(0,8).map(el => ({tag:el.tagName, className:el.className?.toString(), text:el.innerText?.slice(0,70), left:Math.round(el.getBoundingClientRect().left), right:Math.round(el.getBoundingClientRect().right)}))""")
+        assert not clipped, f"Contenido cortado fuera del viewport: {label}: {clipped}"
         assert not metrics["heroHeadingOverflow"], f"El titular principal desborda su columna: {label}: {metrics}"
+        clipped = page.evaluate("""() => [...document.querySelectorAll('main *, header *, footer *')].filter(el => { const r=el.getBoundingClientRect(); const s=getComputedStyle(el); return r.width > 0 && (r.right > innerWidth + 1 || r.left < -1) && s.position !== 'absolute' && s.position !== 'fixed'; }).slice(0,8).map(el => ({tag:el.tagName, className:el.className?.toString(), text:el.innerText?.slice(0,70), left:Math.round(el.getBoundingClientRect().left), right:Math.round(el.getBoundingClientRect().right)}))""")
+        assert not clipped, f"Contenido cortado fuera del viewport: {label}: {clipped}"
         accessibility = page.evaluate("""() => ({
           imagesWithoutAlt: [...document.images].filter(image => !image.hasAttribute('alt')).length,
           unnamedButtons: [...document.querySelectorAll('button')].filter(button => !button.innerText.trim() && !button.getAttribute('aria-label')).length,
