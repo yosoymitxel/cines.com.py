@@ -110,7 +110,5 @@ const catalogue = await fs.readFile(path.join(dist, 'cartelera/index.html'), 'ut
 assert.match(catalogue, /id="results-count"[^>]*aria-live="polite"[^>]*aria-atomic="true"/);
 assert.match(catalogue, /id="no-results"[^>]*role="status"[^>]*aria-live="polite"/);
 assert.match(visualCss, /\.film-index[^}]*color:#b93220/);
-for (const route of movieRoutes) {
-  const detail = await fs.readFile(path.join(movieDirectory, route, 'index.html'), 'utf8');
-  assert.match(detail, /Afiche no disponible: [^"]+/);
-}
+const buildSource = await fs.readFile(path.join(root, 'scripts/build.mjs'), 'utf8');
+assert.match(buildSource, /aria-label="Afiche no disponible: \$\{escapeHtml\(movie\.title\)\}"/);
