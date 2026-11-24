@@ -25,6 +25,8 @@
     });
   }
 
+  const FILM_ICON_SVG = '<svg class="poster-fallback-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect><line x1="7" y1="2" x2="7" y2="22"></line><line x1="17" y1="2" x2="17" y2="22"></line><line x1="2" y1="12" x2="22" y2="12"></line><line x1="2" y1="7" x2="7" y2="7"></line><line x1="2" y1="17" x2="7" y2="17"></line><line x1="17" y1="17" x2="22" y2="17"></line><line x1="17" y1="7" x2="22" y2="7"></line></svg>';
+
   for (const image of document.querySelectorAll('.poster-image')) {
     const replaceWithFallback = () => {
       if (!image.isConnected) return;
@@ -33,7 +35,7 @@
       fallback.className = `poster-fallback ${image.className.replace('poster-image', '').trim()}`;
       fallback.setAttribute('role', 'img');
       fallback.setAttribute('aria-label', `Afiche no disponible: ${title}`);
-      fallback.textContent = title;
+      fallback.innerHTML = `${FILM_ICON_SVG}<span>${title}</span>`;
       image.replaceWith(fallback);
     };
     image.addEventListener('error', replaceWithFallback, { once: true });
