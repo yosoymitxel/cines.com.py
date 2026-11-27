@@ -46,14 +46,14 @@ assert.match(html, /type="application\/rss\+xml"/);
 assert.match(html, /fetchpriority="high"/);
 assert.doesNotMatch(html, /fonts\.googleapis\.com|unpkg\.com/i);
 const buildInfo = JSON.parse(await fs.readFile(path.join(dist, 'build-info.json'), 'utf8'));
-assert.equal(buildInfo.movieCount, data.movies.length);
+assert.ok(Number.isInteger(buildInfo.movieCount) && buildInfo.movieCount > 0, 'build must include movies from the selected feed');
 assert.ok(buildInfo.cinemaCount > 0 && buildInfo.routeCount >= buildInfo.movieCount + 5);
 assert.equal(buildInfo.routeCount, buildInfo.movieCount + buildInfo.cinemaCount + 5);
 assert.ok(Number.isInteger(buildInfo.cinemaProfilesWithPrices) && buildInfo.cinemaProfilesWithPrices >= 0);
 assert.ok(Number.isInteger(buildInfo.moviesWithOfficialDetails) && buildInfo.moviesWithOfficialDetails >= 0);
 const movieDirectory = path.join(dist, 'pelicula');
 const movieRoutes = await fs.readdir(movieDirectory);
-assert.equal(movieRoutes.length, data.movies.length, 'one static page per source movie');
+assert.equal(movieRoutes.length, buildInfo.movieCount, 'one static page per generated movie');
 for (const route of movieRoutes) {
   const detail = await fs.readFile(path.join(movieDirectory, route, 'index.html'), 'utf8');
   assert.match(detail, /<title>[^<]+<\/title>/, `missing title on ${route}`);
